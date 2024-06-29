@@ -1,58 +1,127 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const registrationSection = document.getElementById('registration-section');
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registration-form');
+    const navHome = document.getElementById('nav-home');
+    const navRegister = document.getElementById('nav-register');
+    const navSubjects = document.getElementById('nav-subjects');
+    const navStudents = document.getElementById('nav-students');
     const homeSection = document.getElementById('home-section');
+    const registrationSection = document.getElementById('registration-section');
     const subjectsSection = document.getElementById('subjects-section');
     const studentsSection = document.getElementById('students-section');
+    const studentNameH2 = document.getElementById('student-name-h2');
+    const studentNameList = document.getElementById('student-name-list');
+    const studentAge = document.getElementById('student-age');
+    const studentGrade = document.getElementById('student-grade');
+    const studentSchool = document.getElementById('student-school');
+    const studentFavoriteSubject = document.getElementById('student-favorite-subject');
+    const studentStreet = document.getElementById('student-street');
+    const studentCity = document.getElementById('student-city');
+    const studentState = document.getElementById('student-state');
+    const startPrompt = document.getElementById('start-prompt');
+    const resetInfo = document.getElementById('reset-info');
+    const cepSearch = document.getElementById('cep-search');
 
-    document.getElementById('nav-register').addEventListener('click', () => showSection('registration-section'));
-    document.getElementById('nav-home').addEventListener('click', () => showSection('home-section'));
-    document.getElementById('nav-subjects').addEventListener('click', () => showSection('subjects-section'));
-    document.getElementById('nav-students').addEventListener('click', () => showSection('students-section'));
-
-    if (localStorage.getItem('studentData')) {
-        showSection('home-section');
-        displayStudentData();
-    } else {
-        showSection('registration-section');
+    function showSection(section) {
+        homeSection.classList.add('hidden');
+        registrationSection.classList.add('hidden');
+        subjectsSection.classList.add('hidden');
+        studentsSection.classList.add('hidden');
+        section.classList.remove('hidden');
     }
 
-    document.getElementById('registration-form').addEventListener('submit', (event) => {
+    function displayStudentInfo() {
+        studentNameH2.textContent = localStorage.getItem('name');
+        studentNameList.textContent = localStorage.getItem('name');
+        studentAge.textContent = localStorage.getItem('age');
+        studentGrade.textContent = localStorage.getItem('grade');
+        studentSchool.textContent = localStorage.getItem('school');
+        studentFavoriteSubject.textContent = localStorage.getItem('favoriteSubject');
+        studentStreet.textContent = localStorage.getItem('street');
+        studentCity.textContent = localStorage.getItem('city');
+        studentState.textContent = localStorage.getItem('state');
+    }
+
+    function resetInfoStorage() {
+        localStorage.removeItem('name');
+        localStorage.removeItem('age');
+        localStorage.removeItem('grade');
+        localStorage.removeItem('school');
+        localStorage.removeItem('favoriteSubject');
+    }
+
+    function startUserPrompt() {
+        const name = prompt("What's your name?", localStorage.getItem('name') || "");
+        if (name !== null) localStorage.setItem('name', name);
+
+        const age = prompt("How old are you?", localStorage.getItem('age') || "");
+        if (age !== null) localStorage.setItem('age', age);
+
+        const grade = prompt("What grade are you in?", localStorage.getItem('grade') || "");
+        if (grade !== null) localStorage.setItem('grade', grade);
+
+        const school = prompt("What's the name of your school?", localStorage.getItem('school') || "");
+        if (school !== null) localStorage.setItem('school', school);
+
+        const favoriteSubject = prompt("What's your favorite subject?", localStorage.getItem('favoriteSubject') || "");
+        if (favoriteSubject !== null) localStorage.setItem('favoriteSubject', favoriteSubject);
+
+        displayStudentInfo();
+    }
+
+    registerForm.addEventListener('submit', function(event) {
         event.preventDefault();
+        const name = document.getElementById('name').value;
+        const age = document.getElementById('age').value;
+        const grade = document.getElementById('grade').value;
+        const school = document.getElementById('school').value;
+        const favoriteSubject = document.getElementById('favorite-subject').value;
+        const street = document.getElementById('street').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
 
-        const formData = {
-            name: document.getElementById('name').value.trim(),
-            age: parseInt(document.getElementById('age').value.trim()),
-            grade: parseInt(document.getElementById('grade').value.trim()),
-            school: document.getElementById('school').value.trim(),
-            favoriteSubject: document.getElementById('favorite-subject').value.trim(),
-            cep: document.getElementById('cep').value.trim()
-        };
+        localStorage.setItem('name', name);
+        localStorage.setItem('age', age);
+        localStorage.setItem('grade', grade);
+        localStorage.setItem('school', school);
+        localStorage.setItem('favoriteSubject', favoriteSubject);
+        localStorage.setItem('street', street);
+        localStorage.setItem('city', city);
+        localStorage.setItem('state', state);
 
-        const isValid = validateFormData(formData);
-
-        if (isValid) {
-            fetch(`https://viacep.com.br/ws/${formData.cep}/json/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.erro) {
-                        document.getElementById('street').value = data.logradouro;
-                        document.getElementById('city').value = data.localidade;
-                        document.getElementById('state').value = data.uf;
-                    } else {
-                        alert('CEP not found. Please enter a valid CEP.');
-                    }
-                })
-                .catch(error => console.error('Error fetching address:', error));
-
-            localStorage.setItem('studentData', JSON.stringify(formData));
-            showSection('home-section');
-            displayStudentData();
-        }
+        displayStudentInfo();
+        showSection(homeSection);
     });
 
-    document.getElementById('cep-search').addEventListener('click', () => {
-        const cep = document.getElementById('cep').value.trim();
-        if (cep.length === 8) {
+    navHome.addEventListener('click', function() {
+        showSection(homeSection);
+        displayStudentInfo();
+    });
+
+    navRegister.addEventListener('click', function() {
+        showSection(registrationSection);
+    });
+
+    navSubjects.addEventListener('click', function() {
+        showSection(subjectsSection);
+    });
+
+    navStudents.addEventListener('click', function() {
+        showSection(studentsSection);
+    });
+
+    startPrompt.addEventListener('click', function() {
+        startUserPrompt();
+    });
+
+    resetInfo.addEventListener('click', function() {
+        resetInfoStorage();
+        alert("Information Reset!");
+        showSection(registrationSection);
+    });
+
+    cepSearch.addEventListener('click', function() {
+        const cep = document.getElementById('cep').value;
+        if (cep) {
             fetch(`https://viacep.com.br/ws/${cep}/json/`)
                 .then(response => response.json())
                 .then(data => {
@@ -61,85 +130,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('city').value = data.localidade;
                         document.getElementById('state').value = data.uf;
                     } else {
-                        alert('CEP not found. Please enter a valid CEP.');
+                        alert('CEP not found.');
                     }
                 })
-                .catch(error => console.error('Error fetching address:', error));
+                .catch(error => console.error('Error:', error));
         } else {
-            alert('Please enter a valid CEP (8 digits).');
+            alert('Please enter a valid CEP.');
         }
     });
 
-    function displayStudentData() {
-        const studentData = JSON.parse(localStorage.getItem('studentData'));
-        document.getElementById('student-name').textContent = studentData.name;
-        document.getElementById('student-age').textContent = studentData.age;
-        document.getElementById('student-grade').textContent = studentData.grade;
-        document.getElementById('student-school').textContent = studentData.school;
-        document.getElementById('student-favorite-subject').textContent = studentData.favoriteSubject;
-        document.getElementById('student-street').textContent = studentData.street || '';
-        document.getElementById('student-city').textContent = studentData.city || '';
-        document.getElementById('student-state').textContent = studentData.state || '';
-    }
-
-    function validateFormData(formData) {
-        let isValid = true;
-
-        if (formData.name === '') {
-            isValid = false;
-            document.getElementById('name-error').textContent = 'Please enter a name.';
-            document.getElementById('name').classList.add('is-invalid');
-        } else {
-            document.getElementById('name-error').textContent = '';
-            document.getElementById('name').classList.remove('is-invalid');
-        }
-
-        if (isNaN(formData.age) || formData.age <= 0) {
-            isValid = false;
-            document.getElementById('age-error').textContent = 'Please enter a valid age.';
-            document.getElementById('age').classList.add('is-invalid');
-        } else {
-            document.getElementById('age-error').textContent = '';
-            document.getElementById('age').classList.remove('is-invalid');
-        }
-
-        if (isNaN(formData.grade) || formData.grade < 1 || formData.grade > 12) {
-            isValid = false;
-            document.getElementById('grade-error').textContent = 'Please enter a grade between 1 and 12.';
-            document.getElementById('grade').classList.add('is-invalid');
-        } else {
-            document.getElementById('grade-error').textContent = '';
-            document.getElementById('grade').classList.remove('is-invalid');
-        }
-
-        if (formData.school === '') {
-            isValid = false;
-            document.getElementById('school-error').textContent = 'Please enter a school name.';
-            document.getElementById('school').classList.add('is-invalid');
-        } else {
-            document.getElementById('school-error').textContent = '';
-            document.getElementById('school').classList.remove('is-invalid');
-        }
-
-        if (formData.favoriteSubject === '') {
-            isValid = false;
-            document.getElementById('favorite-subject-error').textContent = 'Please enter a favorite subject.';
-            document.getElementById('favorite-subject').classList.add('is-invalid');
-        } else {
-            document.getElementById('favorite-subject-error').textContent = '';
-            document.getElementById('favorite-subject').classList.remove('is-invalid');
-        }
-
-
-        return isValid;
-    }
-
-    function showSection(sectionId) {
-        registrationSection.classList.add('hidden');
-        homeSection.classList.add('hidden');
-        subjectsSection.classList.add('hidden');
-        studentsSection.classList.add('hidden');
-
-        document.getElementById(sectionId).classList.remove('hidden');
+    if (localStorage.getItem('name')) {
+        displayStudentInfo();
+        showSection(homeSection);
+    } else {
+        showSection(registrationSection);
     }
 });
