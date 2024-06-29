@@ -235,3 +235,93 @@ function removeSubject(index) {
     localStorage.setItem('subjects', JSON.stringify(subjects));
     displaySubjects();
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const addStudentButton = document.getElementById('add-student');
+    const filterGradeSelect = document.getElementById('filter-grade');
+
+    function displayStudents() {
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const tbody = document.querySelector('#students-table tbody');
+        tbody.innerHTML = '';
+
+        students.forEach((student, index) => {
+            const row = `
+                <tr>
+                    <td>${student.name}</td>
+                    <td>${student.grade}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removeStudent(${index})">Remove</button>
+                    </td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+
+        populateGradeFilter();
+    }
+
+    function populateGradeFilter() {
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const grades = Array.from(new Set(students.map(student => student.grade)));
+        filterGradeSelect.innerHTML = '<option value="all">All</option>';
+
+        grades.forEach(grade => {
+            const option = document.createElement('option');
+            option.value = grade;
+            option.textContent = grade;
+            filterGradeSelect.appendChild(option);
+        });
+    }
+
+    addStudentButton.addEventListener('click', () => {
+        const studentName = prompt('Enter student name:');
+        let studentGrade = prompt('Enter student grade (1-12):');
+
+        if (studentName && studentGrade) {
+            studentGrade = parseFloat(studentGrade);
+            if (isNaN(studentGrade) || studentGrade < 1 || studentGrade > 12) {
+                alert('Please enter a valid grade between 1 and 12.');
+            } else {
+                const newStudent = { name: studentName, grade: studentGrade };
+                const students = JSON.parse(localStorage.getItem('students')) || [];
+                students.push(newStudent);
+                localStorage.setItem('students', JSON.stringify(students));
+                displayStudents();
+            }
+        } else {
+            alert('Please enter valid values for both name and grade.');
+        }
+    });
+
+    window.removeStudent = function(index) {
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        students.splice(index, 1);
+        localStorage.setItem('students', JSON.stringify(students));
+        displayStudents();
+    };
+
+    filterGradeSelect.addEventListener('change', () => {
+        const selectedGrade = filterGradeSelect.value;
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const tbody = document.querySelector('#students-table tbody');
+        tbody.innerHTML = '';
+
+        const filteredStudents = selectedGrade === 'all' ? students : students.filter(student => student.grade == selectedGrade);
+
+        filteredStudents.forEach((student, index) => {
+            const row = `
+                <tr>
+                    <td>${student.name}</td>
+                    <td>${student.grade}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removeStudent(${index})">Remove</button>
+                    </td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+    });
+
+    displayStudents();
+});
