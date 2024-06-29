@@ -19,6 +19,11 @@ button {
     border-color: red;
 }
 
+#navbar-title {
+    color: #1DA1F2;
+    font-size: 1.8rem;
+}
+
 #cep-search {
     margin-left: 10px;
     margin-top: 0px;
@@ -27,4 +32,8 @@ button {
 #registration-section {
     max-width: 600px;
     margin: 0 auto;
+}
+
+.hidden {
+    display: none;
 }
