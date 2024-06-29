@@ -1,4 +1,4 @@
-_(English version | [Clique aqui para versão Português-BR]()_
+_(English version | [Clique aqui para versão Português-BR](https://github.com/barbaracalderon/gradebook/blob/main/assets/README-pt.md))_
 
 
 # Gradebook

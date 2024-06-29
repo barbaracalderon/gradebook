@@ -1,4 +1,4 @@
-_(Versão português. | [Clique aqui para versão Inglês-EN]()_
+_(Versão português. | [Clique aqui para versão Inglês-EN](https://github.com/barbaracalderon/gradebook))_
 
 # Gradebook
 
