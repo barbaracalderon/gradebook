@@ -145,4 +145,93 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         showSection(registrationSection);
     }
+
 });
+
+
+function calculateAverage(subject) {
+    const { nota1, nota2, nota3, nota4 } = subject;
+    return ((nota1 + nota2 + nota3 + nota4) / 4).toFixed(2);
+}
+
+function displaySubjects() {
+    const subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+    const tbody = document.querySelector('#grades-table tbody');
+    tbody.innerHTML = '';
+
+    subjects.forEach((subject, index) => {
+        const average = calculateAverage(subject);
+        const row = `
+            <tr>
+                <td>${subject.nome}</td>
+                <td>${subject.nota1}</td>
+                <td>${subject.nota2}</td>
+                <td>${subject.nota3}</td>
+                <td>${subject.nota4}</td>
+                <td>${average}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="removeSubject(${index})">Remove</button>
+                </td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', row);
+    });
+
+    updateAverages();
+}
+
+function updateAverages() {
+    const subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+    const totalAverageSpan = document.getElementById('total-average');
+    const highestAverageSpan = document.getElementById('highest-average');
+
+    if (subjects.length === 0) {
+        totalAverageSpan.textContent = 'N/A';
+        highestAverageSpan.textContent = 'N/A';
+        return;
+    }
+
+    let totalSum = 0;
+    let highestAverage = 0;
+
+    subjects.forEach(subject => {
+        const average = parseFloat(calculateAverage(subject));
+        totalSum += average;
+        if (average > highestAverage) {
+            highestAverage = average;
+        }
+    });
+
+    const totalAverage = (totalSum / subjects.length).toFixed(2);
+    totalAverageSpan.textContent = totalAverage;
+    highestAverageSpan.textContent = highestAverage.toFixed(2);
+}
+
+document.getElementById('add-subject').addEventListener('click', () => {
+    const subjectName = prompt('Enter subject name:');
+    const grade1 = parseFloat(prompt('Enter grade 1:'));
+    const grade2 = parseFloat(prompt('Enter grade 2:'));
+    const grade3 = parseFloat(prompt('Enter grade 3:'));
+    const grade4 = parseFloat(prompt('Enter grade 4:'));
+
+    if (subjectName && isValidGrade(grade1) && isValidGrade(grade2) && isValidGrade(grade3) && isValidGrade(grade4)) {
+        const newSubject = { nome: subjectName, nota1: grade1, nota2: grade2, nota3: grade3, nota4: grade4 };
+        const subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+        subjects.push(newSubject);
+        localStorage.setItem('subjects', JSON.stringify(subjects));
+        displaySubjects();
+    } else {
+        alert('Please enter valid values for all fields (grades between 0 and 10).');
+    }
+});
+
+function isValidGrade(grade) {
+    return typeof grade === 'number' && grade >= 0 && grade <= 10;
+}
+
+function removeSubject(index) {
+    const subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+    subjects.splice(index, 1);
+    localStorage.setItem('subjects', JSON.stringify(subjects));
+    displaySubjects();
+}
