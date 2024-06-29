@@ -1,3 +1,6 @@
+_(English version | [Clique aqui para versão Português-BR]()_
+
+
 # Gradebook
 
 Gradebook is a simple web application for managing student registration, their grades, and subjects. This project is developed using HTML, CSS, JavaScript, Bootstrap, and localStorage for data storage. This project is part of an individual activity within the Fullstack course curriculum at SENAI/SC by Lab365.
