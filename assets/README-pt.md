@@ -73,7 +73,7 @@ Barbara Calderon, desenvolvedora de software.
 
 1. Clone este repositório.
    ```bash
-   git clone https://github.com/your-username/gradebook.git
+   git clone https://github.com/barbaracalderon/gradebook.git
     ```
 
 2. Abra o arquivo `index.html` no seu navegador de escolha.
